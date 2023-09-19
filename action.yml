@@ -14,8 +14,7 @@ inputs:
   use-cross:
     description: |
       Use cross to build the binary
-    required: false
-    default: "false"
+    required: true
   os:
     description: |
       The operating system to build for
