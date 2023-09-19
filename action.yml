@@ -62,11 +62,8 @@ runs:
     - name: install compiler on macos
       shell: bash
       if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
-      id: zld-version
       run: |
         brew install michaeleisel/zld/zld
-        ZLD_VERSION=$(zld --version)
-        echo "version=$ZLD_VERSION" >> $GITHUB_OUTPUT
 
     - name: install mold linker on linux gnu
       if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
