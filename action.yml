@@ -80,4 +80,4 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --release --all-features --target ${{ inputs.target }}
+        args: --all-features --target ${{ inputs.target }}
