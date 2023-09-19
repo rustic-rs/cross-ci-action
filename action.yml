@@ -1,0 +1,66 @@
+name: Cross CI
+description: |
+  Run cross-ci for rustic* crates
+author: "rustic-rs maintainers"
+inputs:
+  toolchain:
+    description: |
+      The rust toolchain to use
+    required: true
+  target:
+    description: |
+      The target to build for
+    required: true
+  use-cross:
+    description: |
+      Use cross to build the binary
+    required: false
+    default: "false"
+  os:
+    description: |
+      The operating system to build for
+    required: true
+  github-token:
+    description: |
+      The github token to use
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # v1
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        profile: minimal
+        override: true
+        target: ${{ inputs.target }}
+
+    - name: install compiler
+      shell: bash
+      if: ${{ inputs.target == 'x86_64-unknown-linux-musl' }}
+      run: |
+        sudo apt update
+        sudo apt-get install -y musl-tools
+
+    - name: install compiler on macos
+      shell: bash
+      if: ${{ inputs.target == 'x86_64-apple-darwin' }} && ${{ inputs.use-cross == 'false' }}
+      run: |
+        brew install michaeleisel/zld/zld
+
+    - name: install mold linker on linux gnu
+      if: ${{ inputs.target == 'x86_64-unknown-linux-gnu' }} && ${{ inputs.use-cross == 'false' }}
+      uses: rui314/setup-mold@v1
+
+    - uses: Swatinem/rust-cache@e207df5d269b42b69c8bc5101da26f7d31feddb4 # v2
+      with:
+        key: ${{ inputs.target }}
+
+    - name: Cargo check
+      uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1
+      with:
+        command: check
+        use-cross: ${{ inputs.use-cross }}
+        toolchain: ${{ inputs.toolchain }}
+        args: --release --all-features --target ${{ inputs.target }}
