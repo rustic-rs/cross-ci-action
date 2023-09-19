@@ -23,6 +23,11 @@ inputs:
     description: |
       The github token to use
     required: false
+  feature:
+    description: |
+      Build features
+    required: false
+    default: "all-features"
 
 runs:
   using: "composite"
@@ -97,4 +102,4 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --all-features --target ${{ inputs.target }}
+        args: --${{ inputs.feature }} --target ${{ inputs.target }}
