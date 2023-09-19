@@ -23,11 +23,15 @@ inputs:
     description: |
       The github token to use
     required: false
+  all-features:
+    description: |
+      Build features with all features
+    required: false
+    default: "true"
   feature:
     description: |
-      Build features
+      The feature to build
     required: false
-    default: "all-features"
 
 runs:
   using: "composite"
@@ -98,8 +102,18 @@ runs:
 
     - name: Cargo check
       uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1
+      if: inputs.all-features == 'true'
       with:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --${{ inputs.feature }} --target ${{ inputs.target }}
+        args: --all-features --target ${{ inputs.target }}
+
+    - name: Cargo check
+      uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1
+      if: inputs.all-features == 'false'
+      with:
+        command: check
+        use-cross: ${{ inputs.use-cross }}
+        toolchain: ${{ inputs.toolchain }}
+        args: --features ${{ inputs.feature }} --target ${{ inputs.target }}
