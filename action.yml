@@ -42,11 +42,31 @@ runs:
         sudo apt update
         sudo apt-get install -y musl-tools
 
+    - name: Cache brew deps
+      uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
+      id: brew-cache
+      if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
+      with:
+        # Paths to cache:
+        # /usr/local/Homebrew - installation folder of Homebrew
+        # /usr/local/Cellar - installation folder of Homebrew formulae
+        # /usr/local/Frameworks, /usr/local/bin, /usr/local/opt - contain (links to) binaries installed by Homebrew formulae
+        # /usr/local/lib/python3.9 - Python3 packages installation
+        path: |
+          /usr/local/Homebrew
+          /usr/local/Cellar
+          /usr/local/Frameworks
+          /usr/local/bin
+        key: zld-cache-${{ inputs.target }}
+
     - name: install compiler on macos
       shell: bash
       if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
+      id: zld-version
       run: |
         brew install michaeleisel/zld/zld
+        ZLD_VERSION=$(zld --version)
+        echo "version=$ZLD_VERSION" >> $GITHUB_OUTPUT
 
     - name: install mold linker on linux gnu
       if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
