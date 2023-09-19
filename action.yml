@@ -19,7 +19,7 @@ inputs:
   os:
     description: |
       The operating system to build for
-    required: true
+    required: false
   github-token:
     description: |
       The github token to use
