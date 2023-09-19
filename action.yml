@@ -37,19 +37,19 @@ runs:
 
     - name: install compiler
       shell: bash
-      if: ${{ inputs.target == 'x86_64-unknown-linux-musl' }}
+      if: inputs.target == 'x86_64-unknown-linux-musl'
       run: |
         sudo apt update
         sudo apt-get install -y musl-tools
 
     - name: install compiler on macos
       shell: bash
-      if: ${{ inputs.target == 'x86_64-apple-darwin' }} && ${{ inputs.use-cross == 'false' }}
+      if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
       run: |
         brew install michaeleisel/zld/zld
 
     - name: install mold linker on linux gnu
-      if: ${{ inputs.target == 'x86_64-unknown-linux-gnu' }} && ${{ inputs.use-cross == 'false' }}
+      if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
       uses: rui314/setup-mold@v1
 
     - uses: Swatinem/rust-cache@e207df5d269b42b69c8bc5101da26f7d31feddb4 # v2
@@ -58,19 +58,19 @@ runs:
 
     - name: Use win config
       shell: bash
-      if: ${{ inputs.target == 'x86_64-pc-windows-msvc' }}
+      if: inputs.target == 'x86_64-pc-windows-msvc'
       run: |
         bash --noprofile --norc "cp ${GITHUB_ACTION_PATH:?}/.config/config-win.toml ${GITHUB_WORKSPACE:?}/.cargo/config.toml"
 
     - name: Use linux config
       shell: bash
-      if: ${{ inputs.target == 'x86_64-unknown-linux-gnu' }} && ${{ inputs.use-cross == 'false' }}
+      if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
       run: |
         bash --noprofile --norc "cp ${GITHUB_ACTION_PATH:?}/.config/config-linux.toml ${GITHUB_WORKSPACE:?}/.cargo/config.toml"
 
     - name: Use darwin config
       shell: bash
-      if: ${{ inputs.target == 'x86_64-apple-darwin' }} && ${{ inputs.use-cross == 'false' }}
+      if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
       run: |
         bash --noprofile --norc "cp ${GITHUB_ACTION_PATH:?}/.config/config-darwin.toml ${GITHUB_WORKSPACE:?}/.cargo/config.toml"
 
