@@ -68,11 +68,12 @@ runs:
           /usr/local/bin
         key: zld-cache-${{ inputs.target }}
 
-    - name: install compiler on macos
-      shell: bash
-      if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
-      run: |
-        brew install michaeleisel/zld/zld
+    # FIXME: zld compilation is currently not working
+    # - name: install compiler on macos
+    #   shell: bash
+    #   if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
+    #   run: |
+    #     brew install michaeleisel/zld/zld
 
     - name: install mold linker on linux gnu
       if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
