@@ -100,7 +100,7 @@ runs:
         cp ${GITHUB_ACTION_PATH:?}/.config/config-darwin.toml ${GITHUB_WORKSPACE:?}/.cargo/config.toml
 
     - name: Cargo check
-      uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1
+      uses: ClementTsang/cargo-action@a211c79cf22973eb590277586fbea20269ca3ca0 # v0 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'true'
       with:
         command: check
@@ -109,7 +109,7 @@ runs:
         args: --all-features --target ${{ inputs.target }}
 
     - name: Cargo check
-      uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1
+      uses: ClementTsang/cargo-action@a211c79cf22973eb590277586fbea20269ca3ca0 # v0 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'false'
       with:
         command: check
