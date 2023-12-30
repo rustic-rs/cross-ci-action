@@ -106,7 +106,7 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --all-features --target ${{ inputs.target }}
+        args: --all-features --target ${{ inputs.target }} --workspace
 
     - name: Cargo check
       uses: ClementTsang/cargo-action@a211c79cf22973eb590277586fbea20269ca3ca0 # v0 (attention: this should be double checked for security issues)
@@ -115,4 +115,4 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --features ${{ inputs.feature }} --target ${{ inputs.target }}
+        args: --features ${{ inputs.feature }} --target ${{ inputs.target }} --workspace
