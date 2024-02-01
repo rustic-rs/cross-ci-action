@@ -32,12 +32,17 @@ inputs:
     description: |
       The feature to build
     required: false
+  project-cache-key:
+    default: "rustic"
+    description: |
+      The project to use, used for caching
+    required: false
 
 runs:
   using: "composite"
   steps:
     - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@1482605bfc5719782e1267fd0c0cc350fe7646b8 # v1
+      uses: dtolnay/rust-toolchain@be73d7920c329f220ce78e0234b8f96b7ae60248 # v1
       with:
         toolchain: ${{ inputs.toolchain }}
         targets: ${{ inputs.target }}
@@ -50,7 +55,7 @@ runs:
         sudo apt-get install -y musl-tools
 
     - name: Cache brew deps
-      uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3
+      uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613 # v3
       id: brew-cache
       if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
       with:
@@ -75,11 +80,14 @@ runs:
 
     - name: install mold linker on linux gnu
       if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
-      uses: rui314/setup-mold@v1
+      uses: rui314/setup-mold@a06ef6535ccec20261b6f58bbadf24d1ef0e5486 #v1
 
-    - uses: Swatinem/rust-cache@e207df5d269b42b69c8bc5101da26f7d31feddb4 # v2
+    - uses: swatinem/rust-cache@378c8285a4eaf12899d11bea686a763e906956af # v2
       with:
         key: ${{ inputs.target }}
+        # A cache key that is used instead of the automatic `job`-based key,
+        # and is stable over multiple jobs.
+        shared-key: ${{ inputs.project-cache-key }}
 
     - name: Use win config
       shell: bash
