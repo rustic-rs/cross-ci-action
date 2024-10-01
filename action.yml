@@ -113,7 +113,7 @@ runs:
         cp ${GITHUB_ACTION_PATH:?}/.config/config-darwin.toml ${GITHUB_WORKSPACE:?}/.cargo/config.toml
 
     - name: Cargo check
-      uses: clechasseur/rs-cargo@09033b94de93c8dc96e7abb64650169469f553f0 # v2 (attention: this should be double checked for security issues)
+      uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'true'
       with:
         command: check
@@ -122,7 +122,7 @@ runs:
         args: --all-features --target ${{ inputs.target }} --workspace
 
     - name: Cargo check
-      uses: clechasseur/rs-cargo@09033b94de93c8dc96e7abb64650169469f553f0 # v2 (attention: this should be double checked for security issues)
+      uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'false'
       with:
         command: check
