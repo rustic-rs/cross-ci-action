@@ -42,7 +42,7 @@ runs:
   using: "composite"
   steps:
     - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@7b1c307e0dcbda6122208f10795a713336a9b35a # v1
+      uses: dtolnay/rust-toolchain@1482605bfc5719782e1267fd0c0cc350fe7646b8 # v1
       with:
         toolchain: ${{ inputs.toolchain }}
         targets: ${{ inputs.target }}
@@ -55,7 +55,7 @@ runs:
         sudo apt-get install -y musl-tools
 
     - name: Cache brew deps
-      uses: actions/cache@81382a721fc89d96eca335d0c3ba33144b2baa9d # v3
+      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4
       id: brew-cache
       if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
       with:
@@ -82,7 +82,7 @@ runs:
       if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
       uses: rui314/setup-mold@0bf4f07ef9048ec62a45f9dbf2f098afa49695f0 #v1
 
-    - uses: swatinem/rust-cache@96a8d65dbafbc7d145a9b2b6c3b12ee335738cd2 # v2
+    - uses: swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2
       with:
         key: ${{ inputs.target }}
         # A cache key that is used instead of the automatic `job`-based key,
