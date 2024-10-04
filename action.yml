@@ -37,6 +37,11 @@ inputs:
     description: |
       The project to use, used for caching
     required: false
+  extra-cargo-build-args:
+    description: |
+      Extra arguments to pass to the cargo build command
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -119,7 +124,7 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --all-features --target ${{ inputs.target }} --workspace
+        args: --all-features --target ${{ inputs.target }} --workspace ${{ inputs.extra-cargo-build-args }}
 
     - name: Cargo check
       uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
@@ -128,4 +133,4 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --features ${{ inputs.feature }} --target ${{ inputs.target }} --workspace
+        args: --features ${{ inputs.feature }} --target ${{ inputs.target }} --workspace ${{ inputs.extra-cargo-build-args }}
