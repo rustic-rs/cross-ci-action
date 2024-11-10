@@ -52,12 +52,25 @@ runs:
         toolchain: ${{ inputs.toolchain }}
         targets: ${{ inputs.target }}
 
-    - name: install compiler
+    - name: install just command runner
+      uses: taiki-e/install-action@b1acf153d459cd533e9e0d25a07042be1dd2ed71 # v2
+      with:
+        tool: just
+
+    - name: Check if default dependencies just recipe exists
       shell: bash
-      if: inputs.target == 'x86_64-unknown-linux-musl'
+      id: check-recipe
       run: |
-        sudo apt update
-        sudo apt-get install -y musl-tools
+        if ! just -f build-dependencies.just -s install-default-${{ inputs.target }}; then
+          echo "Failed to install default dependencies, recipe doesn't exist"
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Install default dependencies
+      shell: bash
+      if: steps.check-recipe.outputs.exists != 'false'
+      run: |
+        just -f build-dependencies.just -s install-default-${{ inputs.target }}
 
     - name: Cache brew deps
       uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
@@ -93,6 +106,20 @@ runs:
         # A cache key that is used instead of the automatic `job`-based key,
         # and is stable over multiple jobs.
         shared-key: ${{ inputs.project-cache-key }}
+
+    - name: Install feature dependencies with just command runner
+      shell: bash
+      if: inputs.extra-features != 'false'
+      run: |
+        target=${{ inputs.target }}
+        features=${{ inputs.extra-features }}
+        set -- junk $features
+        shift
+
+        for feature; do
+          # if just errors out, we don't want to fail the build, it will error later, nevertheless
+          just -f build-dependencies.just install-$feature-$target || true
+        done
 
     - name: Create .cargo folder if it doesn't exist
       shell: bash
