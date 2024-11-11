@@ -107,18 +107,35 @@ runs:
         # and is stable over multiple jobs.
         shared-key: ${{ inputs.project-cache-key }}
 
+    - name: Get additional features specified in platform-settings.toml
+      shell: bash
+      id: additional-features
+      run: |
+        # Exit gracefully if the platform-settings.toml doesn't have additional features
+        if ! toml get platform-settings.toml platforms.${{ inputs.target }}.additional-features; then
+          echo "features=false" >> $GITHUB_OUTPUT
+          exit 0
+        else 
+          features=$(toml get platform-settings.toml platforms.${{ inputs.target }}.additional-features | jq -r 'join(" ")')
+          echo "features=$features" >> $GITHUB_OUTPUT
+        fi
+
     - name: Install feature dependencies with just command runner
       shell: bash
-      if: inputs.extra-features != 'false'
+      if: steps.additional-features.outputs.features != 'false'
       run: |
         target=${{ inputs.target }}
-        features=${{ inputs.extra-features }}
-        set -- junk $features
-        shift
+        features=${{ steps.additional-features.outputs.features }}
 
-        for feature; do
-          # if just errors out, we don't want to fail the build, it will error later, nevertheless
-          just -f build-dependencies.just install-$feature-$target || true
+        for feature in $features; do
+          # check if recipe is existing
+          if ! just -f build-dependencies.just -s install-$feature-$target; then
+            echo "Failed to install $feature dependencies, recipe doesn't exist"
+            echo "Please make sure, that the recipe exists in the build-dependencies.just file"
+            exit 1
+          fi
+
+          just -f build-dependencies.just install-$feature-$target
         done
 
     - name: Create .cargo folder if it doesn't exist
@@ -144,6 +161,38 @@ runs:
       run: |
         cp ${GITHUB_ACTION_PATH:?}/.config/config-darwin.toml ${GITHUB_WORKSPACE:?}/.cargo/config.toml
 
+    - name: Get default features specified in platform-settings.toml
+      shell: bash
+      id: default-features
+      run: |
+        # Exit gracefully if the platform-settings.toml doesn't have default features
+        if ! toml get platform-settings.toml platforms.defaults.release-features; then
+          echo "features=false" >> $GITHUB_OUTPUT
+          exit 0
+        else 
+          features=$(toml get platform-settings.toml platforms.defaults.release-features | jq -r 'join(" ")')
+          echo "features=$features" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Collect features for cargo build
+      shell: bash
+      id: collect-features
+      run: |
+        if [[ ${{ steps.default-features.outputs.features }} != 'false' ]]; then
+          # join the features with a comma
+          echo "default_features=-F $(echo ${{ steps.default-features.outputs.features }} | tr ' ' ',')" >> $GITHUB_OUTPUT
+        else
+          echo "default_features=" >> $GITHUB_OUTPUT
+        fi
+
+
+        if [[ ${{ steps.additional-features.outputs.features }} != 'false' ]]; then
+          # join the features with a comma
+          echo "additional_features=-F $(echo ${{ steps.additional-features.outputs.features }} | tr ' ' ',')" >> $GITHUB_OUTPUT
+        else
+          echo "additional_features=" >> $GITHUB_OUTPUT
+        fi
+
     - name: Cargo check
       uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'true'
@@ -151,7 +200,7 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --all-features --target ${{ inputs.target }} --workspace ${{ inputs.extra-cargo-build-args }}
+        args: --all-features --target ${{ inputs.target }} --workspace ${{ steps.collect-features.outputs.default_features }} ${{ steps.collect-features.outputs.additional_features }} ${{ inputs.extra-cargo-build-args }}
 
     - name: Cargo check
       uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
@@ -160,4 +209,4 @@ runs:
         command: check
         use-cross: ${{ inputs.use-cross }}
         toolchain: ${{ inputs.toolchain }}
-        args: --features ${{ inputs.feature }} --target ${{ inputs.target }} --workspace ${{ inputs.extra-cargo-build-args }}
+        args: --features ${{ inputs.feature }} --target ${{ inputs.target }} --workspace ${{ steps.collect-features.outputs.default_features }} ${{ steps.collect-features.outputs.additional_features }} ${{ inputs.extra-cargo-build-args }}
