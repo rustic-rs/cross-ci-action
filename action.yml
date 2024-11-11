@@ -61,7 +61,7 @@ runs:
       shell: bash
       id: check-recipe
       run: |
-        if ! just -f build-dependencies.just -s install-default-${{ inputs.target }}; then
+        if ! just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just -s install-default-${{ inputs.target }}; then
           echo "Failed to install default dependencies, recipe doesn't exist"
           echo "exists=false" >> $GITHUB_OUTPUT
         fi
@@ -70,7 +70,7 @@ runs:
       shell: bash
       if: steps.check-recipe.outputs.exists != 'false'
       run: |
-        just -f build-dependencies.just -s install-default-${{ inputs.target }}
+        just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just -s install-default-${{ inputs.target }}
 
     - name: Cache brew deps
       uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
@@ -112,11 +112,11 @@ runs:
       id: additional-features
       run: |
         # Exit gracefully if the platform-settings.toml doesn't have additional features
-        if ! toml get platform-settings.toml platforms.${{ inputs.target }}.additional-features; then
+        if ! toml get ${GITHUB_WORKSPACE:?}/platform-settings.toml platforms.${{ inputs.target }}.additional-features; then
           echo "features=false" >> $GITHUB_OUTPUT
           exit 0
         else 
-          features=$(toml get platform-settings.toml platforms.${{ inputs.target }}.additional-features | jq -r 'join(" ")')
+          features=$(toml get ${GITHUB_WORKSPACE:?}/platform-settings.toml platforms.${{ inputs.target }}.additional-features | jq -r 'join(" ")')
           echo "features=$features" >> $GITHUB_OUTPUT
         fi
 
@@ -129,13 +129,13 @@ runs:
 
         for feature in $features; do
           # check if recipe is existing
-          if ! just -f build-dependencies.just -s install-$feature-$target; then
+          if ! just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just -s install-$feature-$target; then
             echo "Failed to install $feature dependencies, recipe doesn't exist"
             echo "Please make sure, that the recipe exists in the build-dependencies.just file"
             exit 1
           fi
 
-          just -f build-dependencies.just install-$feature-$target
+          just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just install-$feature-$target
         done
 
     - name: Create .cargo folder if it doesn't exist
@@ -166,11 +166,11 @@ runs:
       id: default-features
       run: |
         # Exit gracefully if the platform-settings.toml doesn't have default features
-        if ! toml get platform-settings.toml platforms.defaults.release-features; then
+        if ! toml get ${GITHUB_WORKSPACE:?}/platform-settings.toml platforms.defaults.release-features; then
           echo "features=false" >> $GITHUB_OUTPUT
           exit 0
         else 
-          features=$(toml get platform-settings.toml platforms.defaults.release-features | jq -r 'join(" ")')
+          features=$(toml get ${GITHUB_WORKSPACE:?}/platform-settings.toml platforms.defaults.release-features | jq -r 'join(" ")')
           echo "features=$features" >> $GITHUB_OUTPUT
         fi
 
