@@ -55,7 +55,7 @@ runs:
     - name: install just command runner
       uses: taiki-e/install-action@b1acf153d459cd533e9e0d25a07042be1dd2ed71 # v2
       with:
-        tool: just
+        tool: just,toml-cli
 
     - name: Check if default dependencies just recipe exists
       shell: bash
