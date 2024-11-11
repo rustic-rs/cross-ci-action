@@ -53,7 +53,7 @@ runs:
         targets: ${{ inputs.target }}
 
     - name: install just command runner
-      uses: taiki-e/install-action@b1acf153d459cd533e9e0d25a07042be1dd2ed71 # v2
+      uses: taiki-e/install-action@c6dc131d2c4291552cafb840290190a53b2cd937 # v2
       with:
         tool: just
 
