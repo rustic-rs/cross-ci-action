@@ -101,11 +101,11 @@ runs:
       uses: rui314/setup-mold@b015f7e3f2938ad3a5ed6e5111a8c6c7c1d6db6e # v1
 
     - uses: swatinem/rust-cache@82a92a6e8fbeee089604da2575dc567ae9ddeaab # v2
-      # with:
-      #   key: ${{ inputs.target }}
-      #   # A cache key that is used instead of the automatic `job`-based key,
-      #   # and is stable over multiple jobs.
-      #   shared-key: ${{ inputs.project-cache-key }}
+      with:
+        key: ${{ inputs.target }}
+        # A cache key that is used instead of the automatic `job`-based key,
+        # and is stable over multiple jobs.
+        # shared-key: ${{ inputs.project-cache-key }}
 
     - name: Get additional features specified in platform-settings.toml
       shell: bash
