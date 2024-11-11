@@ -70,7 +70,7 @@ runs:
       shell: bash
       if: steps.check-recipe.outputs.exists != 'false'
       run: |
-        just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just -s install-default-${{ inputs.target }}
+        just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just install-default-${{ inputs.target }}
 
     - name: Cache brew deps
       uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
