@@ -194,7 +194,7 @@ runs:
         fi
 
     - name: Cargo check
-      uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
+      uses: clechasseur/rs-cargo@8435b10f6e71c2e3d4d3b7573003a8ce4bfc6386 # v2 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'true'
       with:
         command: check
@@ -203,7 +203,7 @@ runs:
         args: --all-features --target ${{ inputs.target }} --workspace ${{ steps.collect-features.outputs.default_features }} ${{ steps.collect-features.outputs.additional_features }} ${{ inputs.extra-cargo-build-args }}
 
     - name: Cargo check
-      uses: clechasseur/rs-cargo@34eb9ee3e4186e5c7820a54393fbf081f78bc102 # v2 (attention: this should be double checked for security issues)
+      uses: clechasseur/rs-cargo@8435b10f6e71c2e3d4d3b7573003a8ce4bfc6386 # v2 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'false'
       with:
         command: check
