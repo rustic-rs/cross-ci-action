@@ -52,10 +52,10 @@ runs:
         toolchain: ${{ inputs.toolchain }}
         targets: ${{ inputs.target }}
 
-    - name: install just command runner
+    - name: install rust dependencies
       uses: taiki-e/install-action@6da51af62171044932d435033daa70a0eb3383ba # v2
       with:
-        tool: just,toml-cli
+        tool: just,toml-cli,bindgen-cli
 
     - name: Check if default dependencies just recipe exists
       shell: bash
