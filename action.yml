@@ -68,7 +68,7 @@ runs:
 
     - name: Install default dependencies
       shell: bash
-      if: steps.check-recipe.outputs.exists != 'false'
+      if: steps.check-recipe.outputs.exists != 'false' && inputs.use-cross == 'false'
       run: |
         just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just install-default-${{ inputs.target }}
 
