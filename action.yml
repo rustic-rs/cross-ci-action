@@ -53,7 +53,7 @@ runs:
         targets: ${{ inputs.target }}
 
     - name: install rust dependencies
-      uses: taiki-e/install-action@a22e1808bbd53573c0b897cc089c64643401af7d # v2
+      uses: taiki-e/install-action@acf70b3a1ed953bccebc8c5d80cfdb16ec8ccc36 # v2
       with:
         tool: just,toml-cli,bindgen-cli
 
@@ -74,7 +74,7 @@ runs:
         just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just install-default-${{ inputs.target }}
 
     - name: Cache brew deps
-      uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
       id: brew-cache
       if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
       with:
