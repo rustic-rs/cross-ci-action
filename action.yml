@@ -47,13 +47,13 @@ runs:
   using: "composite"
   steps:
     - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@1482605bfc5719782e1267fd0c0cc350fe7646b8 # v1
+      uses: dtolnay/rust-toolchain@a54c7afa936fefeb4456b2dd8068152669aa8203 # v1
       with:
         toolchain: ${{ inputs.toolchain }}
         targets: ${{ inputs.target }}
 
     - name: install rust dependencies
-      uses: taiki-e/install-action@acf70b3a1ed953bccebc8c5d80cfdb16ec8ccc36 # v2
+      uses: taiki-e/install-action@955a6ff1416eae278c9f833008a9beb4b7f9afe3 # v2
       with:
         tool: just,toml-cli,bindgen-cli
 
@@ -74,7 +74,7 @@ runs:
         just -f ${GITHUB_WORKSPACE:?}/build-dependencies.just install-default-${{ inputs.target }}
 
     - name: Cache brew deps
-      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+      uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
       id: brew-cache
       if: inputs.target == 'x86_64-apple-darwin' && inputs.use-cross == 'false'
       with:
@@ -99,9 +99,9 @@ runs:
 
     - name: install mold linker on linux gnu
       if: inputs.target == 'x86_64-unknown-linux-gnu' && inputs.use-cross == 'false'
-      uses: rui314/setup-mold@b015f7e3f2938ad3a5ed6e5111a8c6c7c1d6db6e # v1
+      uses: rui314/setup-mold@f80524ca6eeaa76759b57fb78ddce5d87a20c720 # v1
 
-    - uses: swatinem/rust-cache@82a92a6e8fbeee089604da2575dc567ae9ddeaab # v2
+    - uses: swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2
       with:
         key: ${{ inputs.target }}
         # A cache key that is used instead of the automatic `job`-based key,
@@ -195,7 +195,7 @@ runs:
         fi
 
     - name: Cargo check
-      uses: clechasseur/rs-cargo@8435b10f6e71c2e3d4d3b7573003a8ce4bfc6386 # v2 (attention: this should be double checked for security issues)
+      uses: clechasseur/rs-cargo@319e211e9459c5e531afb6d157296765b441572e # v3 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'true'
       with:
         command: check
@@ -204,7 +204,7 @@ runs:
         args: --all-features --target ${{ inputs.target }} --workspace ${{ steps.collect-features.outputs.default_features }} ${{ steps.collect-features.outputs.additional_features }} ${{ inputs.extra-cargo-build-args }}
 
     - name: Cargo check
-      uses: clechasseur/rs-cargo@8435b10f6e71c2e3d4d3b7573003a8ce4bfc6386 # v2 (attention: this should be double checked for security issues)
+      uses: clechasseur/rs-cargo@319e211e9459c5e531afb6d157296765b441572e # v3 (attention: this should be double checked for security issues)
       if: inputs.all-features == 'false'
       with:
         command: check
